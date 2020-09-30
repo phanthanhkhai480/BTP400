@@ -1,0 +1,129 @@
+/**
+* Chequing account information based on super class of Account
+* contains account information and extra such as service_charge, # of transaction
+*
+* @author Khai Phan (02/20/2020)
+*/
+
+package com.seneca.accounts;
+
+import java.math.BigDecimal;
+
+public class GIC extends Account implements Taxable {
+	double mTax = 0, interestRate = 0;
+	int investmentYears = 0;
+	
+	/**
+	 * default constructor, set to default values
+	 * @return nothing
+	 */
+	public GIC() {
+		this.mTax = 0;
+		this.interestRate = 1.25;
+		this.investmentYears = 1;
+	}
+	
+	public GIC(String fullName, String accountNumber, double startingBalance, 
+			double interestRate, int investmentYear) {
+		
+		super(fullName, accountNumber, startingBalance);
+		this.interestRate = interestRate;
+		this.investmentYears = investmentYear;
+	}
+	
+	/**
+	 * calculate tax with a given tax rate
+	 */
+	@Override
+	public void calculateTax() {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * calculate amount of tax based on given rate and given income
+	 * @return amount of taxes
+	 */
+	@Override
+	public double getTaxAmount() {
+		// TODO Auto-generated method stub
+		return this.mTax;
+	}
+
+	/**
+	 * similar to to_string method, use to display information
+	 * @return information to be display
+	 */
+	@Override
+	public String createTaxStatement() {
+		// TODO Auto-generated method stub
+		String s = "Tax rate       :" + tax_rate + "%" + 
+				   "Account Number :" + getAccountNumber() + 
+				   "Interest Income: $" + String.format("%.2f", getAccountBalance()) + 
+				   "Amount of tax  : $" + String.format("%.2f", this.mTax) + "/n";
+		return s;
+	}
+	
+	/**
+	* hashCode() methods, check to compare value of the field and attributes
+	*/
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(interestRate);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + investmentYears;
+		temp = Double.doubleToLongBits(mTax);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/**
+	 * equals() methods, use to compare 2 objects if they are in the same class object
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GIC other = (GIC) obj;
+		if (Double.doubleToLongBits(interestRate) != Double.doubleToLongBits(other.interestRate))
+			return false;
+		if (investmentYears != other.investmentYears)
+			return false;
+		if (Double.doubleToLongBits(mTax) != Double.doubleToLongBits(other.mTax))
+			return false;
+		return true;
+	}
+
+	/**
+	 * toString method, display the value
+	 * @return nothing
+	 */
+	@Override
+	public String toString() {	
+		BigDecimal balance = getAccountBalance();
+		double temp = balance.doubleValue();
+		for(int a = 0; a < this.investmentYears; a++) {
+			temp *= (this.interestRate/100);
+			System.out.println("Investment Years:" + this.investmentYears);
+			System.out.println("Interest: " + temp);
+		}
+			
+		this.mTax = temp - balance.doubleValue();
+		
+		StringBuffer str = new StringBuffer();
+		str.append(super.toString());
+		str.append("Account Type                : GIC").append("\n");
+		str.append("Annual Interest Rate        : ").append(String.format("%.2f", this.interestRate)).append("%\n");
+		str.append("Period of Investments       : ").append(this.investmentYears + " years").append("\n");
+		str.append("Interest Income at Maturity : $").append(String.format("%.2f", this.mTax)).append("\n");
+		str.append("Balance at Maturity         : $").append(String.format("%.2f", getAccountBalance())).append("\n");
+	
+		return str.toString();
+	}
+}

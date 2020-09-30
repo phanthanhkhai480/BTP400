@@ -1,0 +1,62 @@
+package lab4;
+
+import java.io.*;
+import java.net.*;
+
+public class AccountServer {
+	public static void main(String[] args) {
+		ServerSocket AccountServer;
+		
+		try {
+			//create a server socket with a distinct port number so client can connect
+			AccountServer = new ServerSocket(8000);
+			
+			//create a socket if an attempt is made to a server
+			System.out.println( "*** this server is going register the cars ***" );
+		    System.out.println( "listening for a connection..." );
+	        Socket socketConnection = AccountServer.accept();
+	        
+	        //create input/output stream to the socket
+			//this will help transfer the input from client to server
+			//and output from server back to client
+			ObjectInputStream  oisFromClient= new ObjectInputStream( socketConnection.getInputStream()  );
+			ObjectOutputStream oosToClient = new ObjectOutputStream( socketConnection.getOutputStream() );    
+			System.out.println( "I/O streams connected to the socket" );
+			
+			//initialize the object
+			System.out.println("Welcome to Bank@Seneca!");
+			Account account, temp;
+			String command = "";
+			
+			try {
+				//receive new create object from client
+				temp = (Account) oisFromClient.readObject();
+				if(temp != null) {
+					System.out.println("Object has been received");
+					account = temp;
+					System.out.println(account);
+				} else {
+					oosToClient.writeChars("Account is null!");
+					oosToClient.flush();
+				}
+					
+				
+			} catch( ClassNotFoundException cnf ) 
+				{ cnf.printStackTrace(); }
+			  catch( EOFException eof ) 
+				{ System.out.println("*** THE client has terminated connection ***" ); }
+			  catch(IOException e ) 
+				{ e.printStackTrace();    }	 
+
+				//close the socket with the server
+				oosToClient.close();
+				oisFromClient.close();	      
+				socketConnection.close();	   
+			
+		}catch(IOException e ) 
+			{ e.printStackTrace();     }	
+
+	    System.out.println( "*** the server is going to stop running ***" );
+	}
+
+}

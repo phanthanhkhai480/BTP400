@@ -1,0 +1,26 @@
+package lab4;
+
+import java.io.*;
+import java.net.*;
+
+public class AccountServer {
+	public static void main(String[] args) {
+		ServerSocket AccountServer;
+		
+		try {
+			//create a server socket with a distinct port number so client can connect
+			AccountServer = new ServerSocket(8000);
+			
+			//create a socket if an attempt is made to a server
+			System.out.println( "*** this server is going register the cars ***" );
+		    System.out.println( "listening for a connection..." );
+
+	        Socket socketConnection = AccountServer.accept();
+			
+		}catch(IOException e ) 
+			{ e.printStackTrace();     }	
+
+	    System.out.println( "*** the server is going to stop running ***" );
+	}
+
+}

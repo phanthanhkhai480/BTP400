@@ -1,0 +1,165 @@
+/**
+* Chequing account information based on super class of Account
+* contains account information and extra such as service_charge, # of transaction
+*
+* @author Khai Phan (02/20/2020)
+*/
+
+package com.seneca.accounts;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+
+public class Chequing extends Account {
+	double service_charge = 0, total_service = 0;
+	int maxTransaction = 0, counterTransaction = 0, counterService = 0;
+	BigDecimal current_balance = super.getAccountBalance();
+	double[] mTransaction;
+	
+	/**
+	 * default constructor, set to default values
+	 * @return nothing
+	 */
+	public Chequing() {
+		this.service_charge = 0.25;
+		this.maxTransaction = 3;
+		this.counterTransaction = 0;
+		mTransaction = new double[this.maxTransaction];
+	}
+	
+	/**
+	 * constructor with 5 arguments
+	 * @param fullName
+	 * @param accountNumber
+	 * @param startingBalance
+	 * @param serviceCharge
+	 * @param maximumTransaction
+	 */
+	public Chequing(String fullName, String accountNumber, double startingBalance, 
+			double serviceCharge, int maximumTransaction) {
+		
+		super(fullName, accountNumber, startingBalance);
+		this.service_charge = serviceCharge;
+		this.maxTransaction = maximumTransaction;
+	}
+	
+	/**
+	 * equals() methods, use to compare 2 objects if they are in the same class object
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Chequing other = (Chequing) obj;
+		if (counterTransaction != other.counterTransaction)
+			return false;
+		if (!Arrays.equals(mTransaction, other.mTransaction))
+			return false;
+		if (maxTransaction != other.maxTransaction)
+			return false;
+		if (Double.doubleToLongBits(service_charge) != Double.doubleToLongBits(other.service_charge))
+			return false;
+		return true;
+	}
+
+
+	/**
+	 * toString() methods, use to display information when the object is being called
+	 */
+	@Override
+	public String toString() {
+		double total_charge = this.service_charge * this.maxTransaction;
+		StringBuffer str = new StringBuffer();
+		str.append(super.toString());
+		str.append("Account Type        : CHQ").append("\n");
+		str.append("Service Charge      : $").append(String.format("%.2f", this.service_charge)).append("\n");
+		str.append("Total Charge        : $").append(String.format("%.2f", total_charge)).append("\n");
+		str.append("Final Balance       : $").append(String.format("%.2f", getAccountBalance())).append("\n");
+		
+				//"List of Transactions: ";
+		//for(int a = 0; a < this.maxTransaction; a++) {
+			//if(this.mTransaction[a] > 0)
+				//s += "+" + this.mTransaction[a] + ", ";
+			//else
+				//s += "-" + this.mTransaction[a] + ", ";
+		//}
+				
+		return str.toString();
+	}
+	
+	/**
+	 * hashCode() methods, check to compare value of the field and attributes
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + this.counterTransaction;
+		result = prime * result + Arrays.hashCode(this.mTransaction);
+		result = prime * result + this.maxTransaction;
+		long temp;
+		temp = Double.doubleToLongBits(this.service_charge);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+	
+	/**
+	 * subtract funds out of account_balance
+	 * @param amount user need to withdraw from their account
+	 * @return true if the account_balance isn't negative after withdrawal
+	 */
+	@Override
+	public boolean withdraw(double amount) {
+		if (amount < 1)
+			return false;
+		
+		else if(this.counterTransaction > this.maxTransaction)
+			return false;
+		
+		else if((getAccountBalance().doubleValue() - amount - this.service_charge) < 0)
+			return false;
+		else {
+			Double balance = getAccountBalance().doubleValue();
+			balance -= amount;
+			this.mTransaction[this.counterTransaction] = (amount*-1);
+			this.counterTransaction++;	
+			this.counterService++;
+			setAccountBalance(new BigDecimal(balance));
+		}		
+		return true;
+	}
+	
+	/**
+	 * add funds to current account_balance
+	 * @param amount stored double type to add into account_balance
+	 */
+	@Override
+	public void deposit(double amount) {
+		Double balance = getAccountBalance().doubleValue();
+		if (amount > 0) {
+			balance += amount;
+			System.out.println(balance);
+			setAccountBalance(new BigDecimal(balance));
+			this.mTransaction[this.counterTransaction] = amount;
+			this.counterTransaction++;
+		}
+	}
+	
+	/**
+	 * account_balance getter
+	 * @return account_balance value
+	 */
+	@Override
+	public BigDecimal getAccountBalance() {
+		if(this.service_charge > 0) {
+			this.total_service = this.counterService * this.service_charge;
+			BigDecimal temp = new BigDecimal(this.total_service);
+			this.current_balance.subtract(temp);
+		}
+		return this.current_balance;
+	}
+}

@@ -1,0 +1,98 @@
+package com.seneca.accounts;
+
+import java.math.BigDecimal;
+
+public class GIC extends Account implements Taxable {
+	double mTax, interestRate;
+	int investmentYears;
+	
+	/**
+	 * default constructor, set to default values
+	 * @return nothing
+	 */
+	public GIC() {
+		this.mTax = 0;
+		this.interestRate = 1.25;
+		this.investmentYears = 1;
+	}
+	
+	public GIC(String fullName, String accountNumber, double startingBalance, 
+			double interestRate, int investmentYear) {
+		
+		super(fullName, accountNumber, startingBalance);
+		this.interestRate = interestRate;
+		this.investmentYears = investmentYear;
+	}
+	
+	 @Override
+	public void calculateTax() {
+		// TODO Auto-generated method stub
+		BigDecimal balance = getAccountBalance();
+		this.mTax = balance.doubleValue() * tax_rate/100;
+		
+	}
+	 
+	@Override
+	public double getTaxAmount() {
+		// TODO Auto-generated method stub
+		return this.mTax;
+	}
+
+	@Override
+	public String createTaxStatement() {
+		// TODO Auto-generated method stub
+		String s = "Tax rate       :" + tax_rate + "%" + 
+				   "Account Number :" + getAccountNumber() + 
+				   "Interest Income: $" + String.format("%.2f", getAccountBalance()) + 
+				   "Amount of tax  : $" + String.format("%.2f", this.mTax) + "/n";
+		return s;
+	}
+	
+	/**
+	* hashCode() methods, check to compare value of the field and attributes
+	*/
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(interestRate);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + investmentYears;
+		temp = Double.doubleToLongBits(mTax);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	/**
+	 * equals() methods, use to compare 2 objects if they are in the same class object
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GIC other = (GIC) obj;
+		if (Double.doubleToLongBits(interestRate) != Double.doubleToLongBits(other.interestRate))
+			return false;
+		if (investmentYears != other.investmentYears)
+			return false;
+		if (Double.doubleToLongBits(mTax) != Double.doubleToLongBits(other.mTax))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {		
+		String s = super.toString() +
+				"Account Type                : GIC" + "\n" +
+				"Annual Interest Rate        : " + String.format("%.2f", this.interestRate) + "%" + "\n" + 
+				"Period of Investments       : " + this.investmentYears + " years" + "\n" + 
+				"Interest Income at Maturity : $" + String.format("%.2f", this.mTax) + "\n" + 
+				"Balance at Maturity         : $" + String.format("%.2f", getAccountBalance()) + "\n";
+		return s;
+	}
+}

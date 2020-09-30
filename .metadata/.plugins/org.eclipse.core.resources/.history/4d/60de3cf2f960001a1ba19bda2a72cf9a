@@ -1,0 +1,119 @@
+package lab4;
+
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class RunnableExample {
+	//option 1: use a static variable to find result
+	static String M_SEARCHWORD = "java";
+	
+	public static void main(String[] args) {
+		
+		//string of existing data
+		String [][] data = {
+				 { "java", "I love java", "c++", "python" },
+				 { "c programs", "cookies", "java developers", "oops"},
+				 { "john", "doe", "mary", "mark holmes"},
+				 { "hello java java", "byebye", "java again?", "java what?"},
+				 { "toronto", "montreal", "quebec city", "calgary"}
+				 };
+		
+		//option 1: to take user input and find result
+		//take input from user for keyword search
+		//Scanner object = new Scanner(System.in);
+		//System.out.print("+ search word: ");
+		//String searchWord = object.nextLine();
+		
+		System.out.print("+ search word: " + M_SEARCHWORD + "\n");	
+		
+		//create objects of SearchThreads to pass the array for comparision
+		Thread runnableExample = new Thread(new SearchRunnable(data));
+		
+		//passing data into Runnable method
+		System.out.println("+ summary");
+		runnableExample.start();
+		
+		//object.close();
+	}
+}
+
+class SearchRunnable implements Runnable {
+	private String search = RunnableExample.M_SEARCHWORD;
+	private String[][] dataArray = {};
+	int counter = 0, fail_counter = 0, count = 0;
+	String temp = "";
+	ArrayList<String> dataStore = new ArrayList<String>();
+	
+	/**
+	 * One-Argument Constructor, to receive the data information
+	 * @param information
+	 */
+	public SearchRunnable(String[][] information) {		this.dataArray = information;	}
+	
+	/**
+	 * run method for the Runnable Thread
+	 */
+	public void run() {
+		//check if the search string is null or empty
+		if(this.search != null || this.search != "") {
+			
+			while (count < 1) {
+				
+				//if not, proceed to check true/false for the string information
+				for(int a = 0; a < this.dataArray.length; a++) {
+					//set interval time between each display
+					try {
+						ThreadLocalRandom generator = ThreadLocalRandom.current();
+						long random = generator.nextLong(100,2000);
+						Thread.sleep(random);
+					} catch( InterruptedException e) { }
+					
+					for(int b = 0; b < this.dataArray[a].length; b++) {
+						//if string in data contain search string
+						//add to string then add string to ArrayList
+						if(this.dataArray[a][b].contains(search)) {
+							temp+= dataArray[a][b] + ", ";
+							counter++;
+						}
+						//else increase the fail_counter to display ***
+						else
+							this.fail_counter++;
+					}
+					dataStore.add(temp);		
+					fail_counter = 0;
+					temp = "";
+				}
+				
+				for(int e = 0; e < this.dataStore.size(); e++) {
+					if(dataStore.get(e).equals(""))
+						System.out.print("  row " + (e+1) + ": " + "***");
+					else 
+						System.out.print("  row " + (e+1) + ": " + dataStore.get(e) + ", ");			
+					System.out.println();	
+				}
+				count++;
+			}
+		}	
+		System.out.println("+ total number of strings found: " + counter + "\n");
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

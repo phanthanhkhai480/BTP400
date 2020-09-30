@@ -1,0 +1,42 @@
+package lab4;
+
+import java.io.*;
+import java.net.*;
+
+public class AccountServer {
+	public static void main(String[] args) {
+		ServerSocket AccountServer;
+		
+		try {
+			//create a server socket with a distinct port number so client can connect
+			AccountServer = new ServerSocket(8000);
+			
+			//create a socket if an attempt is made to a server
+			System.out.println( "*** this server is going register the cars ***" );
+		    System.out.println( "listening for a connection..." );
+	        Socket socketConnection = AccountServer.accept();
+	        
+	        //create input/output stream to the socket
+			//this will help transfer the input from client to server
+			//and output from server back to client
+			ObjectInputStream  oisFromClient= new ObjectInputStream( socketConnection.getInputStream()  );
+			ObjectOutputStream oosToClient = new ObjectOutputStream( socketConnection.getOutputStream() );    
+			System.out.println( "I/O streams connected to the socket" );
+			
+			//initialize the object
+			System.out.println("Welcome to Bank@Seneca!");
+			Account account;
+			
+			try {
+				//receive new create object from client
+				account = (Account) oisFromClient.readObject();
+				System.out.println("Object has been received");
+			}
+			
+		}catch(IOException e ) 
+			{ e.printStackTrace();     }	
+
+	    System.out.println( "*** the server is going to stop running ***" );
+	}
+
+}

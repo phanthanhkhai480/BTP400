@@ -1,0 +1,35 @@
+package lab4;
+
+import java.io.*;
+import java.net.*;
+
+public class AccountClient {
+
+	public static void main(String[] args) {
+		Socket AccountClient;
+		
+		try {
+			//connect to server via an IP address/server name with a port number
+			AccountClient = new Socket(InetAddress.getByName("Localhost"), 8000);
+			System.out.println("Connected to " + AccountClient.getInetAddress().getHostAddress());
+			
+			//create input/output stream to the socket
+			//this will help transfer the input from client to server
+			//and output from server back to client
+			ObjectInputStream  oisFromServer= new ObjectInputStream( AccountClient.getInputStream()  );
+			ObjectOutputStream oosToServer = new ObjectOutputStream( AccountClient.getOutputStream() );    
+			System.out.println( "I/O streams connected to the socket" );
+			
+			//initialize the object
+			Account account = new Account("Khai Phan", "A1111", 1000.00);
+			System.out.println(account);
+			
+			
+		} catch( IOException ioe ) 
+			{ ioe.printStackTrace(); }
+ 
+        System.out.println( "the client is going to stop runing..." );
+
+	}
+
+}

@@ -1,0 +1,96 @@
+package lab4;
+
+import java.util.Scanner;
+
+public class ThreadExample {
+	public static void main(String[] args) {
+		
+		//string of existing data
+		String [][] data = {
+				 { "java", "I love java", "c++", "python" },
+				 { "c programs", "cookies", "java developers", "oops"},
+				 { "john", "doe", "mary", "mark holmes"},
+				 { "hello java java", "byebye", "java again?", "java what?"},
+				 { "toronto", "montreal", "quebec city", "calgary"}
+				 };
+		
+		//take input from user for keyword search
+		Scanner object = new Scanner(System.in);
+		System.out.print("+ search word: ");
+		String searchWord = object.nextLine();
+		
+		//length size of the data array
+		int size = data.length;
+		
+		//create a boolean to hold the checked value
+		Boolean[][] checked = null; 
+		
+		//check to see if array contain the # of value is correct
+		//int temp = 0;
+		
+		//create objects of SearchThreads to pass the array for comparision
+		SearchThread[] threads = new SearchThread[size];
+		
+		//passing array data into SearchThread to analyze data
+		for(int a = 0; a < size; a++) {
+			threads[a] = new SearchThread(data[a], searchWord);
+			
+		}
+		
+		//joining point, wait for the threads to finish its task before continue
+		try {
+			for(int b = 0; b < size; b++) {
+				threads[b].start();
+				threads[b].join();
+				checked[b] = threads[b].getResult();
+			}
+		} catch (InterruptedException error) {	}
+		
+		/*
+		 System.out.println("summary");
+		for(int c = 0; c < size; c++) {
+			if(contain == null)
+				System.out.println("row" + c + ": ***");
+			else {
+				System.out.println("row" + c + ":");
+				
+			}
+				
+				
+		}
+		
+		 */
+		object.close();
+	}
+}
+
+class SearchThread extends Thread {
+	private String search = "";
+	private String[] dataArray;
+	private Boolean[] dataReturn;
+	
+	public SearchThread() {
+		this.search = "";
+		this.dataArray = null;
+		this.dataReturn = null;
+	}
+	
+	public SearchThread(String[] information, String m_contain) {
+		this.dataArray = information;
+		this.search = m_contain;
+		this.dataReturn = new Boolean[this.dataArray.length];
+	}
+	
+	public void run() {
+		for(int a = 0; a < this.dataArray.length; a++) {
+			if(this.dataArray[a].contains(this.search)) {	this.dataReturn[a] = true;	} 
+			else {	this.dataReturn[a] = false;	}
+		}
+		
+		for(int b = 0; b < this.dataReturn.length; b++)
+			System.out.print(this.dataReturn[b] + ",");
+		System.out.println();
+	}
+	
+	public Boolean[] getResult() {		return this.dataReturn;	}
+}
